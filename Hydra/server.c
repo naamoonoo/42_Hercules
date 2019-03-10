@@ -46,7 +46,7 @@ int ft_server(char *PORT)
 	else
 		printf("server acccept the client...\n");
 
-	while(1)
+	while (1)
 	{ 
 		bzero(buff, MAX);
 		recv(connected_fd, buff, sizeof(buff), 0);

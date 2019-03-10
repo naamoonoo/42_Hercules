@@ -24,7 +24,7 @@ int ft_client(char *PORT)
 	else
 		printf("[PORT : %s]connected to the server..\n", PORT);
 
-	while(1)
+	while (1)
 	{
 		bzero(buff, sizeof(buff));
 		printf("[client] : ");

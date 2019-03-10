@@ -13,7 +13,6 @@
 #define MAX 1024
 #define SA struct sockaddr
 #define AI struct addrinfo
-// #define IP_ADDRESS 172.20.10.2
 
 int ft_client(char *PORT);
 int ft_server(char *PORT);
