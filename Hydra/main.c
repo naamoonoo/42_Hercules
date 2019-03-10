@@ -2,7 +2,6 @@
 
 int	main(int ac, char *av[])
 {
-	int PORT;
 	int sockfd;
 
 	if (ac != 3)
@@ -10,19 +9,18 @@ int	main(int ac, char *av[])
 		printf("./hydra server/client PortNumber\n[example] ./hydra server 8800\n");
 		return (1);
 	}
-	if(!(PORT = atoi(av[2])))
+	if(!av[2])
 	{
 		printf("put the valid port number\n");
 		return (1);
 	}
-	else
-	{
-		sockfd = socket(AF_INET, SOCK_STREAM, 0); 
-	}
 	if (strcmp(av[1], "server") == 0)
-		ft_server(sockfd, PORT);
+	{
+		if(ft_server(av[2]) == 1)
+			ft_server(av[2]);
+	}
 	else if (strcmp(av[1], "client") == 0)
-		ft_client(sockfd, PORT);
+		ft_client(av[2]);
 	else
 	{
 		printf("choose between server and client\n");

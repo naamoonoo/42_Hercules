@@ -1,70 +1,52 @@
 #include "hydra.h"
 
-int ft_client(int sockfd, int PORT)
+int ft_client(char *PORT)
 {
-	int connfd;
-	unsigned int len;
-	int n; 
-	int cli;
-	char buff[MAX];
-	struct sockaddr_in servaddr;
+	int 				n;
+	int					sockfd;
+	char				buff[MAX];
+	struct addrinfo		adr;
+	struct addrinfo		*res;
 
-	bzero(&servaddr, sizeof(servaddr)); 
-	// assign IP, PORT 
-	servaddr.sin_family = AF_INET; 
-	servaddr.sin_addr.s_addr = inet_addr("172.20.10.2"); 
-	servaddr.sin_port = htons(PORT); 
-	// connect the client socket to server socket 
-	if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0)
+	bzero(&adr, sizeof(adr));
+	adr.ai_family = AF_INET;
+	adr.ai_socktype = SOCK_STREAM;
+	adr.ai_flags = AI_PASSIVE;
+	getaddrinfo("10.112.7.25", PORT, &adr, &res);
+	// addrress info ifconif | grep inet
+
+	sockfd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+	if (connect(sockfd, res->ai_addr, res->ai_addrlen) != 0)
 	{
-		printf("connection with the server failed...\n"); 
-		exit(0); 
+		printf("connection with the server failed...\n");
+		exit(0);
 	}
 	else
-		printf("connected to the server..\n"); 
+		printf("[PORT : %s]connected to the server..\n", PORT);
 
 	while(1)
 	{
-		bzero(buff, sizeof(buff)); 
-		printf("Enter the string : "); 
-		n = 0; 
-		while ((buff[n++] = getchar()) != '\n') 
-			; 
-		write(sockfd, buff, sizeof(buff)); 
-		bzero(buff, sizeof(buff)); 
-		read(sockfd, buff, sizeof(buff)); 
-		printf("From Server : %s", buff); 
-		if ((strncmp(buff, "exit", 4)) == 0) 
-		{
-			printf("Client Exit...\n"); 
-			break; 
-		} 
-	} 
-
-	// infinite loop for chat 
-	while(1)
-	{ 
-		bzero(buff, MAX); 
-		// read the message from client and copy it in buffer 
-		read(connfd, buff, sizeof(buff)); 
-		// print buffer which contains the client contents 
-		printf("From client: %s\nTo client : ", buff); 
-		bzero(buff, MAX); 
-		n = 0; 
-		// copy server message in the buffer 
+		bzero(buff, sizeof(buff));
+		printf("[client] : ");
+		n = 0;
 		while ((buff[n++] = getchar()) != '\n') 
 			;
-  
-		// and send that buffer to client 
-		write(connfd, buff, sizeof(buff)); 
-  
-		// if msg contains "Exit" then server exit and chat ended. 
+		send(sockfd, buff, sizeof(buff), 0);
 		if (strncmp("exit", buff, 4) == 0)
 		{
-			printf("Server Exit...\n"); 
-			break; 
+			printf("You left the server...\n");
+			break;
 		}
+		bzero(buff, sizeof(buff));
+		recv(sockfd, buff, sizeof(buff), 0);
+		if (strncmp("exit", buff, 4) == 0)
+		{
+			printf("Server has be closed...\n");
+			break;
+		}
+		printf("[server] : %s", buff);
+
 	} 
-	close(sockfd); 
-	return (0);
-}
+
+	close(sockfd);
+	return (0);}
