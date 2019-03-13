@@ -60,17 +60,25 @@ int ft_server(char *PORT)
 		}
 		else
 		{
-			printf("[client] : %s[server] : ", buff);
-			bzero(buff, MAX);
-			n = 0;
-			while ((buff[n++] = getchar()) != '\n') 
-				;
-			send(connected_fd, buff, sizeof(buff), 0);
-			if (strncmp("exit", buff, 4) == 0)
+			if (strncmp("ping", buff, 4) == 0)
 			{
-				printf("You close the server...\n");
-				break;
-			}	
+				printf("[client] : %s[server] : pong pong", buff);
+				send(connected_fd, "pong pong", sizeof("pong pong"), 0);
+			}
+			else
+			{
+				printf("[client] : %s[server] : ", buff);
+				bzero(buff, MAX);
+				n = 0;
+				while ((buff[n++] = getchar()) != '\n') 
+					;
+				send(connected_fd, buff, sizeof(buff), 0);
+				if (strncmp("exit", buff, 4) == 0)
+				{
+					printf("You close the server...\n");
+					break;
+				}	
+			}
 		}	
 	} 
 	close(sockfd);
